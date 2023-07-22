@@ -7,7 +7,8 @@ class App extends React.Component {
     this.state = {
       starWarsData: [],
       CityName: '',
-      cityData: {}
+      cityData: {},
+      error: false
     };
   }
 
@@ -21,17 +22,20 @@ class App extends React.Component {
     try {
       let swChars = await axios.get(`http://www.swapi.tech/api/people/?pages=1`);
       this.setState({
-        starWarsData: swChars.data.results
+        starWarsData: swChars.data.results,
+        error: false
       });
-    } catch (error) {
-      console.error("Error fetching Star Wars data:", error);
+      } catch(error) {
+        this.setState({
+          error: true
+        })
     }
   }
 
   handleLocationSubmit = async (e) => {
     e.preventDefault();
 
-    let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.cityName}&format=json`;
+    let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.CityName}&format=json`;
     let cityData = await axios.get(url)
     this.setState({
       cityData: cityData.data[0]
@@ -41,11 +45,9 @@ class App extends React.Component {
   }
 
   changeCityInput = (e) => {
-    e.preventDefault();
-
     this.setState({
       CityName: e.target.value
-    })
+    });
   }
 
   render() {
@@ -62,7 +64,12 @@ class App extends React.Component {
         <form onSubmit={this.handleSWSubmit}>
           <button type="submit">Display Star Wars Data</button>
         </form>
-        <ul>{swList}</ul>
+        {this.state.error
+          ?
+          <p>There was an error</p>
+          :
+          <ul>{swList}</ul>
+        }
         <form onSubmit={this.handleLocationSubmit}>
           <button type="submit">Get Location Data</button>
           <label>Search for a City:
