@@ -14,7 +14,7 @@ class App extends React.Component {
 // When dealing with axios you need 3 things:
 // -1) async
 // -2) await
-// -3) 
+// -3) something
 
   handleSWSubmit = async (event) => {
     event.preventDefault();
