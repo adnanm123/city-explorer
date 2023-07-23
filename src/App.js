@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios"; // axios is an object that has several methods
+import Table from 'react-bootstrap/Table';
 
 class App extends React.Component {
   constructor(props) {
@@ -56,6 +57,28 @@ class App extends React.Component {
       return <li key={idx}>{char.name}</li>;
     });
 
+    let cityArr = [this.state.cityData]
+    let displayCityData = cityArr.map((city, idx) => {
+      return (
+        <Table key={idx} striped bordered hover> 
+          <thead>
+            <tr>
+              <th>City Name</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{city.display_name}</td>
+              <td>{city.lat}</td>
+              <td>{city.lon}</td>
+            </tr>
+          </tbody>
+        </Table>
+      )
+    })    
+
     // let mapURL = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.330062&zoom=12`
 
     return (
@@ -71,11 +94,12 @@ class App extends React.Component {
           <ul>{swList}</ul>
         }
         <form onSubmit={this.handleLocationSubmit}>
-          <button type="submit">Get Location Data</button>
+          <button type="submit">Explore!</button>
           <label>Search for a City:
             <input name="city" onChange={this.changeCityInput} />
           </label>
         </form>
+        <div>{displayCityData}</div>
       </>
     );
   }
