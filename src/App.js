@@ -6,25 +6,29 @@ class App extends React.Component {
     super(props);
     this.state = {
       starWarsData: [],
-      CityName: '',
-      cityData: {}
+      cityName: '',
+      cityData: {},
+      error: false
     };
   }
 
 // When dealing with axios you need 3 things:
 // -1) async
 // -2) await
-// -3) 
+// -3) something
 
   handleSWSubmit = async (event) => {
     event.preventDefault();
     try {
       let swChars = await axios.get(`http://www.swapi.tech/api/people/?pages=1`);
       this.setState({
-        starWarsData: swChars.data.results
+        starWarsData: swChars.data.results,
+        error: false
       });
-    } catch (error) {
-      console.error("Error fetching Star Wars data:", error);
+      } catch(error) {
+        this.setState({
+          error: true
+        })
     }
   }
 
@@ -32,7 +36,7 @@ class App extends React.Component {
     e.preventDefault();
 
     let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.cityName}&format=json`;
-    let cityData = await axios.get(url)
+    let cityData = await axios.get(url);
     this.setState({
       cityData: cityData.data[0]
     });
@@ -41,11 +45,9 @@ class App extends React.Component {
   }
 
   changeCityInput = (e) => {
-    e.preventDefault();
-
     this.setState({
-      CityName: e.target.value
-    })
+      cityName: e.target.value
+    });
   }
 
   render() {
@@ -54,7 +56,7 @@ class App extends React.Component {
       return <li key={idx}>{char.name}</li>;
     });
 
-    let mapURL = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.330062&zoom=12`
+    // let mapURL = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.330062&zoom=12`
 
     return (
       <>
@@ -62,11 +64,16 @@ class App extends React.Component {
         <form onSubmit={this.handleSWSubmit}>
           <button type="submit">Display Star Wars Data</button>
         </form>
-        <ul>{swList}</ul>
+        {this.state.error
+          ?
+          <p>There was an error</p>
+          :
+          <ul>{swList}</ul>
+        }
         <form onSubmit={this.handleLocationSubmit}>
           <button type="submit">Get Location Data</button>
           <label>Search for a City:
-          <input name="city" onChange={this.changeCityInput} />
+            <input name="city" onChange={this.changeCityInput} />
           </label>
         </form>
       </>
