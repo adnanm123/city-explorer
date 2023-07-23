@@ -6,7 +6,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       starWarsData: [],
-      CityName: '',
+      cityName: '',
       cityData: {},
       error: false
     };
@@ -35,8 +35,8 @@ class App extends React.Component {
   handleLocationSubmit = async (e) => {
     e.preventDefault();
 
-    let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.CityName}&format=json`;
-    let cityData = await axios.get(url)
+    let url = `https://us1.locationiq.com/v1/search?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&q=${this.state.cityName}&format=json`;
+    let cityData = await axios.get(url);
     this.setState({
       cityData: cityData.data[0]
     });
@@ -46,7 +46,7 @@ class App extends React.Component {
 
   changeCityInput = (e) => {
     this.setState({
-      CityName: e.target.value
+      cityName: e.target.value
     });
   }
 
@@ -56,7 +56,7 @@ class App extends React.Component {
       return <li key={idx}>{char.name}</li>;
     });
 
-    let mapURL = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.330062&zoom=12`
+    // let mapURL = `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=47.6038321,-122.330062&zoom=12`
 
     return (
       <>
@@ -73,7 +73,7 @@ class App extends React.Component {
         <form onSubmit={this.handleLocationSubmit}>
           <button type="submit">Get Location Data</button>
           <label>Search for a City:
-          <input name="city" onChange={this.changeCityInput} />
+            <input name="city" onChange={this.changeCityInput} />
           </label>
         </form>
       </>
