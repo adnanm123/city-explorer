@@ -3,7 +3,7 @@ import axios from "axios"; // axios is an object that has several methods
 import Table from "react-bootstrap/Table";
 import Image from "react-bootstrap/Image";
 import "./App.css";
-// import Alert from 'react-bootstrap/Alert';
+import Alert from "react-bootstrap/Alert";
 
 class App extends React.Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class App extends React.Component {
       console.log("This is an error");
       this.setState({
         error: true,
-        errorMessage: `an error occurred: ${error.message}`,
+        errorMessage: `an error occurred: ${error.response.status}`,
       });
     }
   };
@@ -67,13 +67,6 @@ class App extends React.Component {
             </tbody>
           </Table>
           <Image src={mapURL} roundedCircle />
-          {/* {this.state.error && 
-          <>
-         <Alert>
-         {this.state.errorMessage} 
-       </Alert>
-       </>
-      } */}
         </div>
       );
     });
@@ -88,7 +81,11 @@ class App extends React.Component {
         <form onSubmit={this.handleLocationSubmit}>
           <button type="submit">Explore!</button>
         </form>
-        <div>{displayCityData}</div>
+        {this.state.error ? (
+          <Alert variant="danger">{this.state.errorMessage}</Alert>
+        ) : (
+          <div>{displayCityData}</div>
+        )}
       </main>
     );
   }
