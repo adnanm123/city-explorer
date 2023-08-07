@@ -2,9 +2,11 @@ import React from "react";
 import axios from "axios";
 import Image from "react-bootstrap/Image";
 import "./App.css";
+import "./components/CityTable.css";
 import Alert from "react-bootstrap/Alert";
 import CityTable from "./components/CityTable";
 import CityForm from "./components/CityForm";
+import Weather from "./components/Weather";
 
 class App extends React.Component {
   constructor(props) {
@@ -14,10 +16,12 @@ class App extends React.Component {
       cityData: {},
       error: false,
       success: false,
-      cityLon: "",
-      cityLat: "",
+      lon: "",
+      lat: "",
       errorMessage: "",
       cityDisplayName: "",
+      weather: [],
+      weatherError: "",
     };
   }
 
@@ -29,15 +33,16 @@ class App extends React.Component {
       let lat = cityData.data[0].lat;
       let lon = cityData.data[0].lon;
       let cityDisplayName = cityData.data[0].display_name;
+
       this.setState({
         cityData: cityData.data[0],
-        cityLat: lat,
-        cityLon: lon,
+        lat: lat,
+        lon: lon,
+        cityDisplayName: cityDisplayName,
         success: true,
       });
-      this.setState({
-        cityDisplayName: cityDisplayName,
-      });
+
+      this.displayWeather(cityData.data[0].lat, cityData.data[0].lon);
     } catch (error) {
       console.log("This is an error");
       this.setState({
@@ -47,6 +52,20 @@ class App extends React.Component {
           error.response ? error.response.status : error.message
         }`,
       });
+    }
+  };
+
+  displayWeather = async (lat, lon) => {
+    const weatherData = `${process.env.REACT_APP_SERVER_URL}/weather?searchQuery=${this.state.cityName}&lat=${lat}&lon=${lon}`;
+    try {
+      const weather = await axios.get(weatherData);
+      this.setState({ weather: weather.data });
+    } catch (error) {
+      console.log(
+        "This is an error inside display weather function",
+        error.response.data
+      );
+      this.setState({ weatherError: error.response.data });
     }
   };
 
@@ -70,20 +89,25 @@ class App extends React.Component {
         {this.state.success ? (
           <Alert variant="success">City data retrieved successfully!</Alert>
         ) : null}
-        {this.state.cityData ? (
+        {this.state.cityData && this.state.lat && this.state.lon ? (
           <div className="CityTable">
             <CityTable
-              cityLat={this.state.cityLat}
-              cityLon={this.state.cityLon}
+              lat={this.state.lat}
+              lon={this.state.lon}
               cityDisplayName={this.state.cityDisplayName}
             />
             <Image
-              src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=${this.state.cityLat},${this.state.cityLon}&zoom=12`}
-              roundedCircle
+              src={`https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_API_KEY}&center=${this.state.lat},${this.state.lon}&zoom=12`}
+              thumbnail
             />
+            {this.state.weatherError ? (
+              <Alert variant="danger">{this.state.weatherError}</Alert>
+            ) : (
+              <Weather weatherData={this.state.weather} />
+            )}
           </div>
         ) : (
-          <div className="CityNotFound">City is not found</div>
+          <div className="CityNotFound">Please input a valid city name</div>
         )}
       </main>
     );
