@@ -7,6 +7,7 @@ import Alert from "react-bootstrap/Alert";
 import CityTable from "./components/CityTable";
 import CityForm from "./components/CityForm";
 import Weather from "./components/Weather";
+import Movie from "./components/Movie";
 
 class App extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class App extends React.Component {
       cityDisplayName: "",
       weather: [],
       weatherError: "",
+      movie: [],
     };
   }
 
@@ -34,15 +36,20 @@ class App extends React.Component {
       let lon = cityData.data[0].lon;
       let cityDisplayName = cityData.data[0].display_name;
 
-      this.setState({
-        cityData: cityData.data[0],
-        lat: lat,
-        lon: lon,
-        cityDisplayName: cityDisplayName,
-        success: true,
-      });
+      this.setState(
+        {
+          cityData: cityData.data[0],
+          lat: lat,
+          lon: lon,
+          cityDisplayName: cityDisplayName,
+          success: true,
+        },
 
-      this.displayWeather(cityData.data[0].lat, cityData.data[0].lon);
+        () => {
+          this.displayWeather(this.state.lat, this.state.lon);
+          this.displayMovie(this.state.cityDisplayName);
+        }
+      );
     } catch (error) {
       console.log("This is an error");
       this.setState({
@@ -66,6 +73,21 @@ class App extends React.Component {
         error.response.data
       );
       this.setState({ weatherError: error.response.data });
+    }
+  };
+
+  displayMovie = async (cityDisplayName) => {
+    let cityName = cityDisplayName.split(",")[0];
+    const movieData = `${process.env.REACT_APP_SERVER_URL}/movies?location=${cityName}`;
+    try {
+      const movie = await axios.get(movieData);
+      this.setState({ movie: movie.data });
+    } catch (error) {
+      console.log(
+        "This is an error inside display movie function",
+        error.response.data
+      );
+      this.setState({ movieError: error.response.data });
     }
   };
 
@@ -104,6 +126,11 @@ class App extends React.Component {
               <Alert variant="danger">{this.state.weatherError}</Alert>
             ) : (
               <Weather weatherData={this.state.weather} />
+            )}
+            {this.state.movieError ? (
+              <Alert variant="danger">{this.state.movieError}</Alert>
+            ) : (
+              <Movie movieData={this.state.movie} />
             )}
           </div>
         ) : (
