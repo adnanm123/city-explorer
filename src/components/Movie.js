@@ -1,14 +1,31 @@
 import React from "react";
-import "./Movie.css";
 import Carousel from "react-bootstrap/Carousel";
+import MovieDay from "./MovieDay";
 
 class Movie extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedIndex: 0, // Add a state to track the selected movie index
+    };
+  }
+
+  handleSelect = (selectedIndex) => {
+    this.setState({
+      selectedIndex,
+    });
+  };
+
   render() {
+    const { movieData } = this.props;
+    const { selectedIndex } = this.state;
+    const selectedMovie = movieData[selectedIndex]; // Get the selected movie based on the selectedIndex
+
     return (
       <div>
         <h3 id="movieHeader">Top Movies</h3>
-        <Carousel id="movieCarousel">
-          {this.props.movieData.map((movie, idx) => (
+        <Carousel id="movieCarousel" activeIndex={selectedIndex} onSelect={this.handleSelect}>
+          {movieData.map((movie, idx) => (
             <Carousel.Item key={idx}>
               <img
                 className="d-block w-100"
@@ -16,16 +33,13 @@ class Movie extends React.Component {
                 alt={movie.title}
               />
               <h5>{movie.title}</h5>
-              <p>Overview: {movie.overview}</p>
-              <p>Released On: {movie.released_on}</p>
-              <p>Popularity: {movie.popularity}</p>
-              <p>Average Votes: {movie.average_votes}</p>
-              <p>Total Votes: {movie.total_votes}</p>
             </Carousel.Item>
           ))}
         </Carousel>
+        <MovieDay selectedMovie={selectedMovie} />
       </div>
     );
   }
 }
+
 export default Movie;

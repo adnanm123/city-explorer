@@ -29,3 +29,7 @@ p {
   padding-left: 1rem;
   padding-left: 1rem;
 }
+
+.btn-clickable {
+  cursor: pointer;
+}
