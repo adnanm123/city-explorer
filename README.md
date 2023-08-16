@@ -96,3 +96,15 @@ Start time: 1:00 p.m Friday
 Finish time: 5:00 p.m Monday
 
 Actual time needed to complete: A day and 4 hours
+
+## Time Estimates lab 9
+
+Name of feature: Refactor: Componentize the front-end codebase
+
+Estimate of time needed to complete: 1 hour
+
+Start time: August 16th 12:00 p.m
+
+Finish time: August 16th 1:00 p.m
+
+Actual time needed to complete: 1 hour
