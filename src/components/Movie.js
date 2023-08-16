@@ -1,4 +1,5 @@
 import React from "react";
+import "./Movie.css";
 import Carousel from "react-bootstrap/Carousel";
 import MovieDay from "./MovieDay";
 
@@ -24,15 +25,22 @@ class Movie extends React.Component {
     return (
       <div>
         <h3 id="movieHeader">Top Movies</h3>
-        <Carousel id="movieCarousel" activeIndex={selectedIndex} onSelect={this.handleSelect}>
+        <Carousel
+          id="movieCarousel"
+          activeIndex={selectedIndex}
+          onSelect={this.handleSelect}
+        >
           {movieData.map((movie, idx) => (
             <Carousel.Item key={idx}>
-              <img
-                className="d-block w-100"
-                src={`https://image.tmdb.org/t/p/original/${movie.image_url}`}
-                alt={movie.title}
-              />
-              <h5>{movie.title}</h5>
+              {movie.image_url ? (
+                <img
+                  className="d-block w-100"
+                  src={`https://image.tmdb.org/t/p/original/${movie.image_url}`}
+                  alt={movie.title}
+                />
+              ) : (
+                ""
+              )}
             </Carousel.Item>
           ))}
         </Carousel>
